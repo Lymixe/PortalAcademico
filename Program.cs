@@ -4,17 +4,22 @@ using PortalAcademico.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// --- SECCIÓN DE SERVICIOS ---
+
+// 1. Conexión a la Base de Datos SQLite
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
+// 2. Configuración de Redis para Caché
 builder.Services.AddStackExchangeRedisCache(options =>
 {
+    // VOLVEMOS AL MÉTODO ORIGINAL Y MÁS SEGURO DE LEER LA CONFIGURACIÓN DE REDIS
     options.Configuration = builder.Configuration["Redis:ConnectionString"];
     options.InstanceName = "PortalAcademico_";
 });
 
+// 3. Configuración de Sesión
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -22,16 +27,20 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// 4. Configuración de Identity con soporte para Roles y Tokens
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI(); 
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+// 5. Añadir servicios para controladores MVC y Razor Pages (para Identity)
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- SECCIÓN DE MIDDLEWARE (PIPELINE DE PETICIONES) ---
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -39,25 +48,22 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapRazorPages()
-   .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages(); 
 
 app.Run();
