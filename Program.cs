@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Conexión a la Base de Datos SQLite
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString));
 
 // 2. Configuración de Redis para Caché
 builder.Services.AddStackExchangeRedisCache(options =>
