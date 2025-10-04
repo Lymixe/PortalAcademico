@@ -1,0 +1,66 @@
+@model IEnumerable<PortalAcademico.Models.Curso>
+
+@{
+    ViewData["Title"] = "Catálogo de Cursos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Index" method="get">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+            <label for="searchString" class="form-label">Nombre del Curso</label>
+            <input type="text" id="searchString" name="SearchString" value="@ViewData["CurrentFilter"]" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="minCreditos" class="form-label">Créditos Mín.</label>
+            <input type="number" id="minCreditos" name="minCreditos" value="@ViewData["MinCreditos"]" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="maxCreditos" class="form-label">Créditos Máx.</label>
+            <input type="number" id="maxCreditos" name="maxCreditos" value="@ViewData["MaxCreditos"]" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="horarioInicio" class="form-label">Horario Desde</label>
+            <input type="time" id="horarioInicio" name="horarioInicio" value="@(ViewData["HorarioInicio"] != null ? ((TimeOnly)ViewData["HorarioInicio"]).ToString("HH:mm") : "")" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label for="horarioFin" class="form-label">Horario Hasta</label>
+            <input type="time" id="horarioFin" name="horarioFin" value="@(ViewData["HorarioFin"] != null ? ((TimeOnly)ViewData["HorarioFin"]).ToString("HH:mm") : "")" class="form-control" />
+        </div>
+        <div class="col-md-12 mt-3">
+            <input type="submit" value="Filtrar" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Limpiar Filtros</a>
+        </div>
+    </div>
+</form>
+
+<div asp-validation-summary="All" class="text-danger mt-3"></div>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Codigo)</th>
+            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Creditos)</th>
+            <th>Horario</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Codigo)</td>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Creditos)</td>
+                <td>@item.HorarioInicio.ToString("HH:mm") - @item.HorarioFin.ToString("HH:mm")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Ver Detalle</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
