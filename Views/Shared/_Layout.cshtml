@@ -39,18 +39,16 @@
     </header>
 
 
-    @if (Context.Session.Keys.Contains("LastCourseId"))
-    {
-        var courseId = Context.Session.GetInt32("LastCourseId");
-        var courseName = Context.Session.GetString("LastCourseName");
-        <div class="container my-3">
-            <div class="alert alert-light text-center" role="alert">
-                <a asp-controller="Cursos" asp-action="Details" asp-route-id="@courseId">
+        @if (Context.Session.Keys.Contains("LastCourseId"))
+        {
+            var courseId = Context.Session.GetInt32("LastCourseId");
+            var courseName = Context.Session.GetString("LastCourseName");
+            <div class="container text-center my-3">
+                <a class="btn btn-outline-primary" asp-controller="Cursos" asp-action="Details" asp-route-id="@courseId">
                     Volver al último curso visitado: <strong>@courseName</strong>
                 </a>
             </div>
-        </div>
-    }
+        }
 
 
     <div class="container">
