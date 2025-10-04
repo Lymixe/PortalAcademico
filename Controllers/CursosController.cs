@@ -6,16 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAcademico.Data;
 using PortalAcademico.Models;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
+using System.Text;
 
 namespace PortalAcademico.Controllers
 {
     public class CursosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IDistributedCache _cache;
 
-        public CursosController(ApplicationDbContext context)
+        public CursosController(ApplicationDbContext context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         public async Task<IActionResult> Index(string searchString, int? minCreditos, int? maxCreditos, TimeOnly? horarioInicio, TimeOnly? horarioFin)
@@ -35,36 +40,54 @@ namespace PortalAcademico.Controllers
             ViewData["HorarioInicio"] = horarioInicio;
             ViewData["HorarioFin"] = horarioFin;
 
-            var cursos = from c in _context.Cursos
-                         where c.Activo
-                         select c;
+            List<Curso> cursosList;
+            string cacheKey = "ListaCursosActivos";
+            var cachedCursos = await _cache.GetAsync(cacheKey);
+
+            if (cachedCursos != null)
+            {
+                var serializedCursos = Encoding.UTF8.GetString(cachedCursos);
+                cursosList = JsonSerializer.Deserialize<List<Curso>>(serializedCursos);
+            }
+            else
+            {
+                cursosList = await _context.Cursos.Where(c => c.Activo).AsNoTracking().ToListAsync();
+                var serializedCursos = JsonSerializer.Serialize(cursosList);
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60)
+                };
+                await _cache.SetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedCursos), cacheOptions);
+            }
+            
+            var cursosQuery = cursosList.AsQueryable();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                cursos = cursos.Where(s => s.Nombre.Contains(searchString));
+                cursosQuery = cursosQuery.Where(s => s.Nombre.Contains(searchString));
             }
 
             if (minCreditos.HasValue)
             {
-                cursos = cursos.Where(c => c.Creditos >= minCreditos);
+                cursosQuery = cursosQuery.Where(c => c.Creditos >= minCreditos.Value);
             }
 
             if (maxCreditos.HasValue)
             {
-                cursos = cursos.Where(c => c.Creditos <= maxCreditos);
+                cursosQuery = cursosQuery.Where(c => c.Creditos <= maxCreditos.Value);
             }
 
             if (horarioInicio.HasValue)
             {
-                cursos = cursos.Where(c => c.HorarioInicio >= horarioInicio);
+                cursosQuery = cursosQuery.Where(c => c.HorarioInicio >= horarioInicio.Value);
             }
 
             if (horarioFin.HasValue)
             {
-                cursos = cursos.Where(c => c.HorarioFin <= horarioFin);
+                cursosQuery = cursosQuery.Where(c => c.HorarioFin <= horarioFin.Value);
             }
 
-            return View(await cursos.AsNoTracking().ToListAsync());
+            return View(cursosQuery.ToList());
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -81,6 +104,9 @@ namespace PortalAcademico.Controllers
             {
                 return NotFound();
             }
+            
+            HttpContext.Session.SetInt32("LastCourseId", curso.Id);
+            HttpContext.Session.SetString("LastCourseName", curso.Nombre);
 
             return View(curso);
         }
