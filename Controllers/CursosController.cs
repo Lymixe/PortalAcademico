@@ -75,15 +75,19 @@ namespace PortalAcademico.Controllers
                 return NotFound();
             }
 
-            var curso = await _context.Cursos
-                .FirstOrDefaultAsync(m => m.Id == id);
-            
-            if (curso == null)
-            {
-                return NotFound();
-            }
+        var curso = await _context.Cursos
+            .FirstOrDefaultAsync(m => m.Id == id);
+        
+        if (curso == null)
+        {
+            return NotFound();
+        }
+
+        HttpContext.Session.SetInt32("LastCourseId", curso.Id);
+        HttpContext.Session.SetString("LastCourseName", curso.Nombre);
 
             return View(curso);
         }
+        
     }
 }
