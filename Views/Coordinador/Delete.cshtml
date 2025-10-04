@@ -1,0 +1,32 @@
+@model PortalAcademico.Models.Curso
+
+@{
+    ViewData["Title"] = "Eliminar Curso";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-danger mt-4">
+    <h3>¿Estás seguro de que quieres eliminar este curso permanentemente?</h3>
+    <p>Esta acción no se puede deshacer.</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4>Detalles del Curso a Eliminar</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Codigo)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Codigo)</dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" class="mt-4">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Sí, eliminar este curso" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Cancelar y volver a la lista</a>
+</form>

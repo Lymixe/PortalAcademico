@@ -1,0 +1,64 @@
+@model IEnumerable<PortalAcademico.Models.Curso>
+
+@{
+    ViewData["Title"] = "Panel de Cursos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">@ViewData["Title"]</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill me-2"></i>Crear Nuevo Curso
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Codigo)</th>
+                    <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                    <th class="text-center">@Html.DisplayNameFor(model => model.Creditos)</th>
+                    <th class="text-center">Cupo Máx.</th>
+                    <th class="text-center">Horario</th>
+                    <th class="text-center">@Html.DisplayNameFor(model => model.Activo)</th>
+                    <th class="text-center" style="width: 280px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Codigo)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.Creditos)</td>
+                    <td class="text-center">@Html.DisplayFor(modelItem => item.CupoMaximo)</td>
+                    <td class="text-center">@item.HorarioInicio.ToString("HH:mm") - @item.HorarioFin.ToString("HH:mm")</td>
+                    <td class="text-center">
+                        @if (item.Activo)
+                        {
+                            <span class="badge bg-success">Sí</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">No</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <a asp-action="VerMatriculas" asp-route-cursoId="@item.Id" class="btn btn-info btn-sm me-1">Matrículas</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-sm me-1">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4">
+        <h4 class="alert-heading">No hay cursos</h4>
+        <p>Aún no se ha creado ningún curso. ¡Haz clic en "Crear Nuevo Curso" para empezar!</p>
+    </div>
+}

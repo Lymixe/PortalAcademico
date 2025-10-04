@@ -30,6 +30,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Cursos" asp-action="Index">Catálogo</a>
                         </li>
+
+                        @if (User.IsInRole("Coordinador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Coordinador" asp-action="Index">Panel Coordinador</a>
+                            </li>
+                        }
                         
                     </ul>
                     <partial name="_LoginPartial" />
