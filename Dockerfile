@@ -1,6 +1,5 @@
 # Fase 1: Compilación
-# Usamos la imagen oficial del SDK de .NET 9 para compilar la aplicación.
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copiamos los archivos del proyecto y restauramos las dependencias.
@@ -13,7 +12,6 @@ WORKDIR "/src/."
 RUN dotnet publish "PortalAcademico.csproj" -c Release -o /app/publish
 
 # Fase 2: Ejecución
-# Usamos una imagen mucho más ligera que solo contiene lo necesario para ejecutar la app.
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
