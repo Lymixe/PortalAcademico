@@ -43,7 +43,6 @@ namespace PortalAcademico.Data
                 NormalizedName = "COORDINADOR"
             });
 
-            var hasher = new PasswordHasher<IdentityUser>();
             builder.Entity<IdentityUser>().HasData(new IdentityUser
             {
                 Id = coordinadorUserId,
@@ -52,8 +51,9 @@ namespace PortalAcademico.Data
                 Email = "coordinador@test.com",
                 NormalizedEmail = "COORDINADOR@TEST.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(null, "Coordinador123!"),
-                SecurityStamp = string.Empty
+                PasswordHash = "AQAAAAIAAYagAAAAEJxG0bQD0zI2VnhkO6rkTC44A5Gz/5sMG4s/G/z53e246a48x5pZkGu3XyFw0s1v9Q==",
+                SecurityStamp = "YHMJDCG2W44O7GKIQ3AJNUCBQP2V24J2",
+                ConcurrencyStamp = "b8a8047b-2321-4d30-9b34-8f430538f296"
             });
 
             builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
@@ -68,5 +68,6 @@ namespace PortalAcademico.Data
                 new Curso { Id = 3, Codigo = "WEB301", Nombre = "Desarrollo de Aplicaciones Web", Creditos = 5, CupoMaximo = 20, HorarioInicio = new TimeOnly(14, 0), HorarioFin = new TimeOnly(16, 0), Activo = true }
             );
         }
+
     }
 }
