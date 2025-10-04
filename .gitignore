@@ -1,0 +1,41 @@
+n[Bb]in/
+[Oo]bj/
+# Ignora los archivos y carpetas específicos de IDEs y editores# Visual Studio.vs/
+*.user
+*.suo
+*.[Cc]ache
+*.[Pp]ublish.xml
+*.[Pp]ublish.*.vs17.pdb
+*.vssscc
+*.vspscc
+*.pidb
+*.vdt
+*.vwd
+# Visual Studio Code.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+# JetBrains Rider.idea/
+*.sln.iml
+*.sln.DotSettings.user
+# Mac.DS_Store
+.AppleDouble
+.LSOverride
+# ===================================================================# Archivos de configuración local y secretos (¡MUY IMPORTANTE!)# ===================================================================# Nunca subas a tu repositorio archivos que contengan contraseñas,# connection strings, API keys, u otros datos sensibles.# Archivos de configuración de desarrollo que pueden contener secretosappsettings.Development.json
+# Archivo de User Secrets (Secretos de Usuario)secrets.json
+# Variables de entorno locales.env
+# ===================================================================# Otros archivos generados por .NET y herramientas# ===================================================================# Archivos de paquetes NuGet*.nupkg
+*.nuget.props
+*.nuget.targets
+packages/
+# Archivos de resultados de pruebasTestResults/
+*.trx
+*.coverlet.json
+# Archivos de registro (logs)*.log*.log.*
+logs/
+LogFiles/
+# Archivos temporales*.tmp
+*.bak
+*.orig
