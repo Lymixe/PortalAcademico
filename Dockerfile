@@ -1,6 +1,6 @@
 # Fase 1: Compilación
-# Usamos la imagen oficial del SDK de .NET 8 para compilar la aplicación.
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Usamos la imagen oficial del SDK de .NET 9 para compilar la aplicación.
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copiamos los archivos del proyecto y restauramos las dependencias.
