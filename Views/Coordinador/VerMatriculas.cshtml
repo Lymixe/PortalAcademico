@@ -4,54 +4,70 @@
     ViewData["Title"] = "Matrículas para " + ViewBag.CursoNombre;
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Estudiante</th>
-            <th>Fecha de Registro</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Usuario.Email)</td>
-                <td>@Html.DisplayFor(modelItem => item.FechaRegistro)</td>
-                <td>
-                    @if (item.Estado == EstadoMatricula.Confirmada)
-                    {
-                        <span class="badge bg-success">@item.Estado</span>
-                    }
-                    else if (item.Estado == EstadoMatricula.Cancelada)
-                    {
-                        <span class="badge bg-danger">@item.Estado</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning text-dark">@item.Estado</span>
-                    }
-                </td>
-                <td>
-                    @if (item.Estado == EstadoMatricula.Pendiente)
-                    {
-                        <form asp-action="ConfirmarMatricula" method="post" style="display:inline;">
-                            <input type="hidden" name="matriculaId" value="@item.Id" />
-                            <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
-                        </form>
-                        <form asp-action="CancelarMatricula" method="post" style="display:inline;">
-                            <input type="hidden" name="matriculaId" value="@item.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">@ViewData["Title"]</h1>
     <a asp-action="Index" class="btn btn-secondary">Volver a la lista de cursos</a>
 </div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Fecha de Registro</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Usuario.Email)</td>
+                        <td>@item.FechaRegistro.ToLocalTime().ToString("g")</td>
+                        <td class="text-center">
+                            @if (item.Estado == EstadoMatricula.Confirmada)
+                            {
+                                <span class="badge bg-success">@item.Estado</span>
+                            }
+                            else if (item.Estado == EstadoMatricula.Cancelada)
+                            {
+                                <span class="badge bg-danger">@item.Estado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@item.Estado</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (item.Estado == EstadoMatricula.Pendiente)
+                            {
+                                <form asp-action="ConfirmarMatricula" method="post" class="d-inline">
+                                    <input type="hidden" name="matriculaId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+                                </form>
+                                <form asp-action="CancelarMatricula" method="post" class="d-inline">
+                                    <input type="hidden" name="matriculaId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin acciones</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4">
+        <h4 class="alert-heading">No hay matrículas</h4>
+        <p>Aún no hay estudiantes matriculados en este curso.</p>
+    </div>
+}
