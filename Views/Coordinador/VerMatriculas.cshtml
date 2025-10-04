@@ -1,0 +1,57 @@
+@model IEnumerable<PortalAcademico.Models.Matricula>
+
+@{
+    ViewData["Title"] = "Matrículas para " + ViewBag.CursoNombre;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Estudiante</th>
+            <th>Fecha de Registro</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Usuario.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaRegistro)</td>
+                <td>
+                    @if (item.Estado == EstadoMatricula.Confirmada)
+                    {
+                        <span class="badge bg-success">@item.Estado</span>
+                    }
+                    else if (item.Estado == EstadoMatricula.Cancelada)
+                    {
+                        <span class="badge bg-danger">@item.Estado</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">@item.Estado</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Estado == EstadoMatricula.Pendiente)
+                    {
+                        <form asp-action="ConfirmarMatricula" method="post" style="display:inline;">
+                            <input type="hidden" name="matriculaId" value="@item.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Confirmar</button>
+                        </form>
+                        <form asp-action="CancelarMatricula" method="post" style="display:inline;">
+                            <input type="hidden" name="matriculaId" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Volver a la lista de cursos</a>
+</div>
